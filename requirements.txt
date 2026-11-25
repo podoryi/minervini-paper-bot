@@ -1,0 +1,9 @@
+﻿numpy
+pandas
+yfinance
+finance-datareader
+beautifulsoup4
+lxml
+requests
+tzdata
+google-genai
