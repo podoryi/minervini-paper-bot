@@ -1,3 +1,4 @@
+import re
 import json
 import os
 import pickle
@@ -232,6 +233,60 @@ def _fetch_ticker_meta_and_consensus(ticker: str) -> Tuple[str, Optional[int], b
     return sector, days_to_earnings, consensus_up, forward_accel
 
 
+
+BUYOUT_TARGET_PHRASES = (
+    "agreed to be acquired",
+    "to be acquired by",
+    "definitive merger agreement",
+    "definitive agreement to be acquired",
+    "tender offer",
+    "take-private",
+    "take private",
+    "going-private",
+    "going private",
+    "buyout offer",
+    "buyout deal",
+    "merger arbitrage",
+    "hsr waiting period",
+    "refile premerger",
+    "antitrust clearance",
+)
+
+
+def _detect_buyout_target(ticker: str, titles: List[str]) -> Optional[str]:
+    t_esc = re.escape(ticker.lower())
+    target_patterns = [
+        re.compile(rf"\b(to acquire|acquires|acquired|acquiring|acquisition of|buyout of|takeover of)\s+{t_esc}\b"),
+        re.compile(rf"\b{t_esc}\s+(to be acquired|agreed to sell|agrees to be acquired|buyout)\b"),
+    ]
+    for title in titles:
+        t_low = title.lower()
+        if any(phrase in t_low for phrase in BUYOUT_TARGET_PHRASES):
+            return title
+        if any(pat.search(t_low) for pat in target_patterns):
+            return title
+    return None
+
+
+def _is_merger_arb_pinned(daily_df: Optional[pd.DataFrame]) -> bool:
+    if daily_df is None or len(daily_df) < 30:
+        return False
+    sub = daily_df.tail(65).copy()
+    prev_c = sub["Close"].shift(1)
+    surge = (sub["Close"] - prev_c) / prev_c
+    if not bool((surge >= 0.15).any()):
+        return False
+
+    recent = sub.tail(12)
+    intraday_range = ((recent["High"] - recent["Low"]) / recent["Close"]).median()
+    daily_move = ((recent["Close"] - recent["Close"].shift(1)).abs() / recent["Close"].shift(1)).dropna().median()
+    peak_65 = float(sub["High"].max())
+    curr_c = float(sub["Close"].iloc[-1])
+    near_cap = (peak_65 - curr_c) / peak_65 <= 0.035
+
+    return bool(near_cap and intraday_range <= 0.013 and daily_move <= 0.006)
+
+
 def _fetch_rss_news(ticker: str) -> List[str]:
     now_dt = datetime.now(timezone.utc)
     titles = []
@@ -259,10 +314,8 @@ def _fetch_rss_news(ticker: str) -> List[str]:
                         age_days = (now_dt - pub_dt).total_seconds() / 86400.0
                     except Exception:
                         age_days = 0.0
-                if age_days <= 14.0 and title not in titles:
+                if age_days <= 30.0 and title not in titles:
                     titles.append(title)
-            if titles:
-                break
         except Exception:
             continue
     return titles
@@ -303,7 +356,7 @@ def check_pead_gap_event(daily_df: Optional[pd.DataFrame]) -> bool:
 def analyze_fundamentals_and_catalyst(ticker: str, daily_df: Optional[pd.DataFrame] = None) -> FundamentalReport:
     os.makedirs(CACHE_DIR, exist_ok=True)
     today_str = datetime.now(timezone.utc).strftime("%Y%m%d")
-    cache_path = os.path.join(CACHE_DIR, f"fundamentals_v4_{today_str}.pkl")
+    cache_path = os.path.join(CACHE_DIR, f"fundamentals_v5_{today_str}.pkl")
 
     cache_dict = {}
     if os.path.exists(cache_path):
@@ -317,6 +370,24 @@ def analyze_fundamentals_and_catalyst(ticker: str, daily_df: Optional[pd.DataFra
 
     has_pead = check_pead_gap_event(daily_df)
     recent_titles = _fetch_rss_news(ticker)
+
+    buyout_headline = _detect_buyout_target(ticker, recent_titles)
+    is_pinned = _is_merger_arb_pinned(daily_df)
+    if buyout_headline or is_pinned:
+        reason = "M&A \ud53c\uc778\uc218 \ub274\uc2a4 \uac10\uc9c0" if buyout_headline else "\uc778\uc218 \ucc28\uc775\uac70\ub798 \uac00\uaca9\uace0\uc815 \uac10\uc9c0"
+        rep = FundamentalReport(
+            ticker=ticker, passed=False, grade="C", sector="Unknown", days_to_earnings=None,
+            is_profitable=False, eps_yoy_pct=None, rev_yoy_pct=None, is_accelerating=False,
+            has_catalyst=False, has_bad_news=True, has_pead_gap=has_pead,
+            consensus_up=False, forward_accel=False, priority_score=0,
+            headline=buyout_headline or (recent_titles[0] if recent_titles else reason),
+            llm_note="\ud53c\uc778\uc218(M&A) \uc0c1\ubc29\uc81c\ud55c \uc81c\uc678",
+            summary=f"\ud53c\uc778\uc218(M&A) \ud655\uc815 \uc885\ubaa9 \uc81c\uc678 ({reason})"
+        )
+        cache_dict[ticker] = rep
+        with open(cache_path, "wb") as f:
+            pickle.dump(cache_dict, f)
+        return rep
     has_catalyst = False
     has_bad_news = False
     best_headline = recent_titles[0] if recent_titles else "최근 14일 주요 뉴스 없음"

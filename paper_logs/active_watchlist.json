@@ -48,30 +48,6 @@
     "has_catalyst": true
   },
   {
-    "ticker": "RXO",
-    "name": "RXO Inc",
-    "exchange": "NYSE",
-    "pattern_type": "VCP_PIVOT",
-    "close": 29.3,
-    "pivot_price": 29.4,
-    "suggested_stop": 27.96,
-    "rs_score": 97.4,
-    "contractions": [
-      34.7,
-      7.3,
-      4.1,
-      3.9
-    ],
-    "vol_dryup_days": 1,
-    "sector": "Industrials",
-    "fund_grade": "A+",
-    "priority_score": 155,
-    "fund_summary": "등급:A+(155점) | 섹터:Industrials | 흑자 | 이익YoY:흑자전환 | 매출YoY:+31.7% [PEAD갭+·컨센서스상향·어닝D-71]",
-    "catalyst_headline": "RXO Q3 Earnings & Revenues Beat Estimates on Brokerage Strength",
-    "llm_note": "API키 미설정(정량지표 우선)",
-    "has_catalyst": true
-  },
-  {
     "ticker": "CROX",
     "name": "Crocs  Inc.",
     "exchange": "NASD",
