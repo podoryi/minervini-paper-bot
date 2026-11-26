@@ -239,6 +239,7 @@ BUYOUT_TARGET_PHRASES = (
     "to be acquired by",
     "definitive merger agreement",
     "definitive agreement to be acquired",
+    "merger agreement",
     "tender offer",
     "take-private",
     "take private",
@@ -250,16 +251,40 @@ BUYOUT_TARGET_PHRASES = (
     "hsr waiting period",
     "refile premerger",
     "antitrust clearance",
+    "cash-and-stock",
+    "stock-and-cash",
+    "all-cash deal",
+    "all-cash offer",
+    "per share in cash",
 )
+
+
+def _fetch_ma_specific_news(ticker: str) -> List[str]:
+    titles = []
+    q = urllib.parse.quote(f'"{ticker}" (acquisition OR buyout OR merger) when:75d')
+    url = f"https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
+    try:
+        req = urllib.request.Request(url, headers=RSS_HEADERS)
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            xml_data = resp.read()
+        root = ET.fromstring(xml_data)
+        for item in root.findall(".//item")[:8]:
+            t_el = item.find("title")
+            if t_el is not None and t_el.text:
+                titles.append(t_el.text.strip())
+    except Exception:
+        pass
+    return titles
 
 
 def _detect_buyout_target(ticker: str, titles: List[str]) -> Optional[str]:
     t_esc = re.escape(ticker.lower())
     target_patterns = [
         re.compile(rf"\b(to acquire|acquires|acquired|acquiring|acquisition of|buyout of|takeover of)\s+{t_esc}\b"),
-        re.compile(rf"\b{t_esc}\s+(to be acquired|agreed to sell|agrees to be acquired|buyout)\b"),
+        re.compile(rf"\b{t_esc}\s+(to be acquired|agreed to sell|agrees to be acquired|buyout|merger|deal)\b"),
     ]
-    for title in titles:
+    all_titles = list(titles) + _fetch_ma_specific_news(ticker)
+    for title in all_titles:
         t_low = title.lower()
         if any(phrase in t_low for phrase in BUYOUT_TARGET_PHRASES):
             return title
@@ -274,17 +299,17 @@ def _is_merger_arb_pinned(daily_df: Optional[pd.DataFrame]) -> bool:
     sub = daily_df.tail(65).copy()
     prev_c = sub["Close"].shift(1)
     surge = (sub["Close"] - prev_c) / prev_c
-    if not bool((surge >= 0.15).any()):
+    if not bool((surge >= 0.14).any()):
         return False
 
-    recent = sub.tail(12)
+    recent = sub.tail(15)
     intraday_range = ((recent["High"] - recent["Low"]) / recent["Close"]).median()
     daily_move = ((recent["Close"] - recent["Close"].shift(1)).abs() / recent["Close"].shift(1)).dropna().median()
     peak_65 = float(sub["High"].max())
     curr_c = float(sub["Close"].iloc[-1])
-    near_cap = (peak_65 - curr_c) / peak_65 <= 0.035
+    near_cap = (peak_65 - curr_c) / peak_65 <= 0.045
 
-    return bool(near_cap and intraday_range <= 0.013 and daily_move <= 0.006)
+    return bool(near_cap and intraday_range <= 0.022 and daily_move <= 0.010)
 
 
 def _fetch_rss_news(ticker: str) -> List[str]:
@@ -356,7 +381,7 @@ def check_pead_gap_event(daily_df: Optional[pd.DataFrame]) -> bool:
 def analyze_fundamentals_and_catalyst(ticker: str, daily_df: Optional[pd.DataFrame] = None) -> FundamentalReport:
     os.makedirs(CACHE_DIR, exist_ok=True)
     today_str = datetime.now(timezone.utc).strftime("%Y%m%d")
-    cache_path = os.path.join(CACHE_DIR, f"fundamentals_v5_{today_str}.pkl")
+    cache_path = os.path.join(CACHE_DIR, f"fundamentals_v6_{today_str}.pkl")
 
     cache_dict = {}
     if os.path.exists(cache_path):
