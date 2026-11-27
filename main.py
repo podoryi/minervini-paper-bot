@@ -1,3 +1,17 @@
+
+def _get_position_ohlcv_kiwoom_first(ticker: str, count: int = 60):
+    """?? ??? ????? ???: ?? REST API ?? ?? ? ?? ? yfinance ??"""
+    try:
+        kw = KiwoomUSClient()
+        if getattr(kw, "is_configured", False):
+            df_kw = kw.get_daily_ohlcv(ticker, count=count)
+            if df_kw is not None and not df_kw.empty:
+                return df_kw
+    except Exception as e:
+        print(f"[WARN] {ticker} ???? ?? ?? ?? ??, yfinance ??: {e}")
+    return None
+
+from brokers.kiwoom_client import KiwoomUSClient
 import os
 import pickle
 import time
@@ -293,7 +307,9 @@ def run_closing_check(engine: ExecutionEngine, broker: MockUSBroker, regime: str
     vol_scale = (210.0 / 200.0) if is_early else (390.0 / 380.0)
 
     if pos_tickers:
-        raw = yf.download(tickers=pos_tickers, start=start_date, group_by="ticker", progress=False)
+        raw = _get_position_ohlcv_kiwoom_first(tickers=pos_tickers, count=60)
+        if raw is None or raw.empty:
+            raw = yf.download(tickers=pos_tickers, start=start_date, group_by="ticker", progress=False)
         if raw is not None and not raw.empty:
             for ticker in pos_tickers:
                 try:
