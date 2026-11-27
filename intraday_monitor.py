@@ -14,7 +14,7 @@ LIVE_TRADING_ENABLED = False  # 가상매매 검증 완료 후 True로 전환
 def load_dotenv_local(path: str = ".env") -> None:
     if not os.path.exists(path):
         return
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
@@ -26,7 +26,7 @@ def load_dotenv_local(path: str = ".env") -> None:
 def load_watchlist() -> List[Dict]:
     if not os.path.exists(WATCHLIST_PATH):
         return []
-    with open(WATCHLIST_PATH, "r", encoding="utf-8") as f:
+    with open(WATCHLIST_PATH, "r", encoding="utf-8-sig") as f:
         data = json.load(f)
     if isinstance(data, list):
         return data
