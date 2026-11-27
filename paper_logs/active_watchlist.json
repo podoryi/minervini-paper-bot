@@ -18,8 +18,32 @@
     "sector": "Healthcare",
     "fund_grade": "A+",
     "priority_score": 155,
-    "fund_summary": "등급:A+(155점) | 섹터:Healthcare | 흑자 | 이익YoY:흑자전환 | 매출YoY:+58.0% [PEAD갭+·컨센서스상향·어닝D-82]",
+    "fund_summary": "등급:A+(155점) | 섹터:Healthcare | 흑자 | 이익YoY:흑자전환 | 매출YoY:+58.0% [PEAD갭+·컨센서스상향·어닝D-81]",
     "catalyst_headline": "Earnings Beat Could Be A Game Changer For Glaukos Stock (GKOS)",
+    "llm_note": "API키 미설정(정량지표 우선)",
+    "has_catalyst": true
+  },
+  {
+    "ticker": "KNSA",
+    "name": "Kiniksa Pharmaceuticals International  PLC",
+    "exchange": "NASD",
+    "pattern_type": "VCP_PIVOT",
+    "close": 100.99,
+    "pivot_price": 103.37,
+    "suggested_stop": 97.68,
+    "rs_score": 99.1,
+    "contractions": [
+      31.6,
+      31.6,
+      10.3,
+      10.3
+    ],
+    "vol_dryup_days": 2,
+    "sector": "Healthcare",
+    "fund_grade": "A+",
+    "priority_score": 155,
+    "fund_summary": "등급:A+(155점) | 섹터:Healthcare | 흑자 | 이익YoY:+143.5% | 매출YoY:+58.1% [PEAD갭+·컨센서스상향·어닝D-88]",
+    "catalyst_headline": "How Investors Are Reacting To Kiniksa Pharmaceuticals International (KNSA) Raised Revenue Guidance",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
   },
@@ -66,8 +90,8 @@
     "sector": "Consumer Cyclical",
     "fund_grade": "A+",
     "priority_score": 155,
-    "fund_summary": "등급:A+(155점) | 섹터:Consumer Cyclical | 흑자 | 이익YoY:+67.4% | 매출YoY:+4.6% [PEAD갭+·컨센서스상향·어닝D-77]",
-    "catalyst_headline": "Zacks Industry Outlook Highlights Ralph Lauren, V.F., Crocs and Columbia Sportswear",
+    "fund_summary": "등급:A+(155점) | 섹터:Consumer Cyclical | 흑자 | 이익YoY:+67.4% | 매출YoY:+4.6% [PEAD갭+·컨센서스상향·어닝D-76]",
+    "catalyst_headline": "Crocs' Social Commerce Momentum: Is TikTok a Lasting Growth Lever?",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
   },
@@ -90,7 +114,7 @@
     "sector": "Healthcare",
     "fund_grade": "A+",
     "priority_score": 150,
-    "fund_summary": "등급:A+(150점) | 섹터:Healthcare | 흑자 | 이익YoY:+23.5% | 매출YoY:+9.3% [PEAD갭+·선행2Q가속·어닝D-70]",
+    "fund_summary": "등급:A+(150점) | 섹터:Healthcare | 흑자 | 이익YoY:+23.5% | 매출YoY:+9.3% [PEAD갭+·선행2Q가속·어닝D-69]",
     "catalyst_headline": "Haemonetics Announces CE Mark Certification for the VASCADE MVP® XL Venous Vascular Closure System",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -114,7 +138,7 @@
     "sector": "Industrials",
     "fund_grade": "A+",
     "priority_score": 150,
-    "fund_summary": "등급:A+(150점) | 섹터:Industrials | 흑자 | 이익YoY:+438.2% | 매출YoY:-0.6% [PEAD갭+·선행2Q가속·어닝D-69]",
+    "fund_summary": "등급:A+(150점) | 섹터:Industrials | 흑자 | 이익YoY:+438.2% | 매출YoY:-0.6% [PEAD갭+·선행2Q가속·어닝D-68]",
     "catalyst_headline": "Stanley Black & Decker (SWK) Just Flashed Golden Cross Signal: Do You Buy?",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -138,7 +162,7 @@
     "sector": "Consumer Cyclical",
     "fund_grade": "A+",
     "priority_score": 145,
-    "fund_summary": "등급:A+(145점) | 섹터:Consumer Cyclical | 흑자 | 이익YoY:+239.3% | 매출YoY:-2.9% [컨센서스상향·선행2Q가속·어닝D-6]",
+    "fund_summary": "등급:A+(145점) | 섹터:Consumer Cyclical | 흑자 | 이익YoY:+239.3% | 매출YoY:-2.9% [컨센서스상향·선행2Q가속·어닝D-5]",
     "catalyst_headline": "Cracker Barrel (CBRL) Stock Sees Modest Fair Value Lift As Analysts Fine Tune Turnaround Views",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -162,8 +186,32 @@
     "sector": "Technology",
     "fund_grade": "A+",
     "priority_score": 145,
-    "fund_summary": "등급:A+(145점) | 섹터:Technology | 흑자 | 이익YoY:+33.3% | 매출YoY:+9.4% [컨센서스상향·선행2Q가속·어닝D-7]",
+    "fund_summary": "등급:A+(145점) | 섹터:Technology | 흑자 | 이익YoY:+33.3% | 매출YoY:+9.4% [컨센서스상향·선행2Q가속·어닝D-6]",
     "catalyst_headline": "Docusign Soars As AI Agents Power Sales Outlook; Shares Near Key Level With Earnings Ahead",
+    "llm_note": "API키 미설정(정량지표 우선)",
+    "has_catalyst": true
+  },
+  {
+    "ticker": "AXGN",
+    "name": "AxoGen  Inc.",
+    "exchange": "NASD",
+    "pattern_type": "VCP_PIVOT",
+    "close": 59.34,
+    "pivot_price": 60.11,
+    "suggested_stop": 56.8,
+    "rs_score": 97.1,
+    "contractions": [
+      43.3,
+      39.8,
+      10.4,
+      8.5
+    ],
+    "vol_dryup_days": 4,
+    "sector": "Healthcare",
+    "fund_grade": "A+",
+    "priority_score": 130,
+    "fund_summary": "등급:A+(130점) | 섹터:Healthcare | 흑자 | 이익YoY:+300.0% | 매출YoY:+26.2% [PEAD갭+·어닝D-88]",
+    "catalyst_headline": "Is AxoGen (AXGN) Outperforming Other Medical Stocks This Year?",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
   },
@@ -210,7 +258,7 @@
     "sector": "Healthcare",
     "fund_grade": "A+",
     "priority_score": 125,
-    "fund_summary": "등급:A+(125점) | 섹터:Healthcare | 흑자 | 이익YoY:흑자전환 | 매출YoY:+52.4% [컨센서스상향·어닝D-75]",
+    "fund_summary": "등급:A+(125점) | 섹터:Healthcare | 흑자 | 이익YoY:흑자전환 | 매출YoY:+52.4% [컨센서스상향·어닝D-74]",
     "catalyst_headline": "HLTH 2026: Hinge Health CEO Daniel Perez on its New Migraine Care Program",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -234,7 +282,7 @@
     "sector": "Technology",
     "fund_grade": "A+",
     "priority_score": 125,
-    "fund_summary": "등급:A+(125점) | 섹터:Technology | 흑자 | 이익YoY:+52.6% | 매출YoY:+10.2% [컨센서스상향·어닝D-76]",
+    "fund_summary": "등급:A+(125점) | 섹터:Technology | 흑자 | 이익YoY:+52.6% | 매출YoY:+10.2% [컨센서스상향·어닝D-75]",
     "catalyst_headline": "Global Succession Planning and Management Software Market Report 2026 | Capitalize on AI and Cloud Growth to $8.64B by 2030 with Oracle, SAP, Workday, Paycom, and Eightfold AI",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -258,7 +306,7 @@
     "sector": "Healthcare",
     "fund_grade": "A+",
     "priority_score": 125,
-    "fund_summary": "등급:A+(125점) | 섹터:Healthcare | 흑자 | 이익YoY:+23.2% | 매출YoY:+10.2% [컨센서스상향·어닝D-75]",
+    "fund_summary": "등급:A+(125점) | 섹터:Healthcare | 흑자 | 이익YoY:+23.2% | 매출YoY:+10.2% [컨센서스상향·어닝D-74]",
     "catalyst_headline": "Exelixis (EXEL) Trades 11% Above Fair Value As Pipeline Hopes Build",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -282,7 +330,7 @@
     "sector": "Healthcare",
     "fund_grade": "A+",
     "priority_score": 120,
-    "fund_summary": "등급:A+(120점) | 섹터:Healthcare | 흑자 | 이익YoY:+523.6% | 매출YoY:-2.2% [선행2Q가속·어닝D-83]",
+    "fund_summary": "등급:A+(120점) | 섹터:Healthcare | 흑자 | 이익YoY:+523.6% | 매출YoY:-2.2% [선행2Q가속·어닝D-82]",
     "catalyst_headline": "Charles River Stock Surges 102.3% in a Year: What's Fueling the Drive?",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -330,7 +378,7 @@
     "sector": "Energy",
     "fund_grade": "A",
     "priority_score": 105,
-    "fund_summary": "등급:A(105점) | 섹터:Energy | 흑자 | 이익YoY:+504.6% | 매출YoY:+197.3% [컨센서스상향·어닝D-69]",
+    "fund_summary": "등급:A(105점) | 섹터:Energy | 흑자 | 이익YoY:+504.6% | 매출YoY:+197.3% [컨센서스상향·어닝D-68]",
     "catalyst_headline": "Here’s What Fuels DHT Holdings’ (DHT) Gains",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
@@ -355,7 +403,7 @@
     "fund_grade": "B",
     "priority_score": 80,
     "fund_summary": "등급:B(80점) | 섹터:Healthcare | 흑자 | 이익YoY:-85.6% | 매출YoY:+60.7% [선행2Q가속]",
-    "catalyst_headline": "TGTX Rises as FDA Accepts sBLA for Simplified Briumvi Dosing Schedule",
+    "catalyst_headline": "TG Therapeutics (TGTX) Following FDA Acceptance Of BRIUMVI Dosing Update Is Valuation Still Fair",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
   },
@@ -378,7 +426,7 @@
     "sector": "Healthcare",
     "fund_grade": "B",
     "priority_score": 60,
-    "fund_summary": "등급:B(60점) | 섹터:Healthcare | 적자 | 이익YoY:N/A | 매출YoY:+2135.6% [어닝D-70]",
+    "fund_summary": "등급:B(60점) | 섹터:Healthcare | 적자 | 이익YoY:N/A | 매출YoY:+2135.6% [어닝D-69]",
     "catalyst_headline": "Montes Archimedes Acquisition (ROIV) Upgraded to Buy: Here's Why",
     "llm_note": "API키 미설정(정량지표 우선)",
     "has_catalyst": true
