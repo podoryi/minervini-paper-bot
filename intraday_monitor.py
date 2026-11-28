@@ -1,4 +1,4 @@
-﻿import glob
+import glob
 import json
 import math
 import os
@@ -45,13 +45,77 @@ def load_account_equity(default_equity: float = 1350.0) -> float:
     return equity
 
 
-def calc_position_sizing(price: float, equity: float) -> tuple[float, float, float]:
-    """계좌 10% 기준 (매수주수, 실투자금, -7% 손절가) 반환"""
+def calc_position_sizing(
+    price: float, equity: float, suggested_stop: float | None = None
+) -> tuple[float, float, float]:
+    """계좌 10% 기준 (소수점 4자리 매수주수, 실투자금, VCP suggested_stop 또는 -7% 손절가) 반환"""
     alloc = equity * ALLOC_PCT
     shares = math.floor((alloc / price) * 10000) / 10000.0 if price > 0 else 0.0
     invested = round(shares * price, 2)
-    stop_price = round(price * (1.0 - STOP_LOSS_PCT), 2)
+    if suggested_stop is not None and 0 < float(suggested_stop) < price:
+        stop_price = round(float(suggested_stop), 2)
+    else:
+        stop_price = round(price * (1.0 - STOP_LOSS_PCT), 2)
     return shares, invested, stop_price
+
+
+def _build_wl_lookup(watchlist) -> dict[str, dict]:
+    if isinstance(watchlist, dict):
+        return {k: v for k, v in watchlist.items() if isinstance(v, dict)}
+    if isinstance(watchlist, list):
+        return {
+            item["ticker"]: item
+            for item in watchlist
+            if isinstance(item, dict) and item.get("ticker")
+        }
+    return {}
+
+
+def _get_meta_fields(meta: dict) -> tuple[str, str, str]:
+    rs = meta.get("rs_rating") or meta.get("rs") or "-"
+    grade = meta.get("fund_grade") or meta.get("grade") or "-"
+    score = meta.get("priority_score") or meta.get("score") or "-"
+    badge = f"RS {rs} | {grade} ({score}점)"
+    summary = (
+        meta.get("fund_summary")
+        or meta.get("summary")
+        or meta.get("reason")
+        or "펀더멘털 요약 없음"
+    )
+    headline = (
+        meta.get("catalyst_headline")
+        or meta.get("headline")
+        or meta.get("news_headline")
+        or "최근 촉매 헤드라인 없음"
+    )
+    return badge, str(summary), str(headline)
+
+
+def _print_watchlist_cards(watchlist, equity: float) -> None:
+    items = (
+        list(watchlist.values())
+        if isinstance(watchlist, dict)
+        else (watchlist if isinstance(watchlist, list) else [])
+    )
+    print(f"
+=== 감시종목 {len(items)}개 펀더멘털 & 촉매 카드 (계좌 ${equity:,.2f} / 종목당 10% 소수점 4자리) ===
+")
+    for idx, item in enumerate(items, 1):
+        if not isinstance(item, dict):
+            continue
+        ticker = item.get("ticker", "-")
+        pivot = float(item.get("pivot_price") or 0.0)
+        raw_stop = item.get("suggested_stop") or item.get("stop_price")
+        shares, invested, stop_px = calc_position_sizing(pivot, equity, raw_stop)
+        stop_pct = ((stop_px - pivot) / pivot * 100.0) if pivot > 0 else -STOP_LOSS_PCT * 100.0
+        badge, summary, headline = _get_meta_fields(item)
+        print(
+            f"[{idx:02d}] {ticker:<5} | 피벗 ${pivot:7.2f} (손절 ${stop_px:7.2f}, {stop_pct:+.1f}%) "
+            f"| {badge} | 매수 {shares:.4f}주(${invested:.2f})"
+        )
+        print(f"     요약: {summary}")
+        print(f"     촉매: {headline}
+")
 
 
 def show_silent_toast(title: str, message: str) -> None:
@@ -112,6 +176,8 @@ def run_monitor(interval_sec: int = 60) -> None:
     price_alerted: set[str] = set()
     equity = load_account_equity()
     print(f"[INIT] 감시 {len(watchlist)}종목 | 계좌자산: ${equity:,.2f} (10%: ${equity*ALLOC_PCT:,.2f}) | 거래량기준: {int(VOL_MULTIPLIER_REQ*100)}%")
+    _print_watchlist_cards(watchlist, equity)
+    wl_lookup = _build_wl_lookup(watchlist)
 
     while True:
         now_kst = datetime.now(KST_TZ).strftime("%Y-%m-%d %H:%M:%S")
@@ -149,16 +215,26 @@ def run_monitor(interval_sec: int = 60) -> None:
 
                 if price >= pivot:
                     if est_vol_pct >= VOL_MULTIPLIER_REQ * 100.0:
-                        shares, invested, stop_px = calc_position_sizing(price, equity)
+                        meta = wl_lookup.get(ticker, {})
+                        raw_stop = meta.get("suggested_stop") or meta.get("stop_price")
+                        shares, invested, stop_px = calc_position_sizing(price, equity, raw_stop)
                         ready_entries.append((ticker, price, pivot, diff_pct, vol, raw_vol_pct, est_vol_pct, shares, invested, stop_px))
                         if ticker not in entry_alerted:
                             entry_alerted.add(ticker)
+                            stop_pct = ((stop_px - price) / price * 100.0) if price > 0 else -STOP_LOSS_PCT * 100.0
+                            badge, summary, headline = _get_meta_fields(meta)
                             msg = (
                                 f"{ticker} ${price:.2f} ({diff_pct:+.2f}%) | 예상거래량 {est_vol_pct:.0f}% | "
-                                f"매수 {shares:.4f}주(${invested:.2f}) | 손절 ${stop_px:.2f}"
+                                f"매수 {shares:.4f}주(${invested:.2f}) | 손절 ${stop_px:.2f}({stop_pct:+.1f}%)"
                             )
-                            show_silent_toast("★ [진입 신호] 피벗+거래량 충족", msg)
-                            append_breakout_log(f"[{now_kst} KST] ★ [진입가능] {msg}")
+                            print("=" * 76)
+                            print(f"★ [진입 신호 카드] {ticker} | 현재가 ${price:.2f} ({diff_pct:+.2f}%) | 예상거래량 {est_vol_pct:.0f}%")
+                            print(f"   주문사이징 : 매수 {shares:.4f}주 (${invested:.2f}) | VCP 손절가 ${stop_px:.2f} ({stop_pct:+.1f}%)")
+                            print(f"   펀더멘털   : {badge} | {summary}")
+                            print(f"   촉매헤드라인: {headline}")
+                            print("=" * 76)
+                            show_silent_toast("★ [진입 신호] 피벗+거래량 충족", f"{msg} | {headline[:55]}")
+                            append_breakout_log(f"[{now_kst} KST] ★ [진입가능] {msg} | 촉매: {headline}")
                     else:
                         price_only.append((ticker, price, pivot, diff_pct, vol, raw_vol_pct, est_vol_pct))
                         if ticker not in price_alerted and ticker not in entry_alerted:
