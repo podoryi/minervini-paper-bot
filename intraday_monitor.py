@@ -45,11 +45,11 @@ def load_account_equity(default_equity: float = 1350.0) -> float:
     return equity
 
 
-def calc_position_sizing(price: float, equity: float) -> tuple[int, float, float]:
+def calc_position_sizing(price: float, equity: float) -> tuple[float, float, float]:
     """계좌 10% 기준 (매수주수, 실투자금, -7% 손절가) 반환"""
     alloc = equity * ALLOC_PCT
-    shares = math.floor(alloc / price) if price > 0 else 0
-    invested = shares * price
+    shares = math.floor((alloc / price) * 10000) / 10000.0 if price > 0 else 0.0
+    invested = round(shares * price, 2)
     stop_price = round(price * (1.0 - STOP_LOSS_PCT), 2)
     return shares, invested, stop_price
 
@@ -155,7 +155,7 @@ def run_monitor(interval_sec: int = 60) -> None:
                             entry_alerted.add(ticker)
                             msg = (
                                 f"{ticker} ${price:.2f} ({diff_pct:+.2f}%) | 예상거래량 {est_vol_pct:.0f}% | "
-                                f"매수 {shares}주(${invested:.2f}) | 손절 ${stop_px:.2f}"
+                                f"매수 {shares:.4f}주(${invested:.2f}) | 손절 ${stop_px:.2f}"
                             )
                             show_silent_toast("★ [진입 신호] 피벗+거래량 충족", msg)
                             append_breakout_log(f"[{now_kst} KST] ★ [진입가능] {msg}")
